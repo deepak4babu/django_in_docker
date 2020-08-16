@@ -1,0 +1,41 @@
+# PYTHON IN A CONTAINER
+# https://code.visualstudio.com/docs/containers/quickstart-python
+# https://code.visualstudio.com/docs/containers/python-user-rights
+
+Run Webapp in Docker: 
+  - Create DockerFile as specified in "https://code.visualstudio.com/docs/containers/quickstart-python"
+  - Open powershell. Navigate to project folder where DockerFile is present
+  - Start "Docker Quickstart terminal"
+  - Build docker image "docker build -t hellodjango ." # . is necessary
+  - The app inside the container runs like "running inside a linux machine". So make sure to replace backslash with forwardslash
+  - After build, run the image "docker run -p 8000:8000 hellodjango" 
+  - In windows, the docker runs within a virtual machine - 192.168.99.100. So to expose it to localhost add "-p 8000:8000"
+  - Open the url "http://192.168.99.100:8000"
+  - Make sure to add the IP in "allowed hosts" in settings.py in django app folder. It should be done before building an image
+  - Command: "Docker images" to see list of images
+  - Command: "docker container ls --all" - list all containers
+  - Command: "docker container prune" - deletes all stopped containers
+  - Command:  docker build -t hellodjango .
+  - Command:  docker run -p 8000:8000 hellodjango
+  - Command:  docker images
+  - Command:  docker image rm 35e2234ae669
+  - Command:  docker container ls --all
+  - Command:  docker container prune
+  - Command:  docker container stop 3974fa21ee7b
+
+Add Project to Github:
+
+  Id CommandLine
+  -- -----------
+   1 & "d:/VS Code Projects/hello_django/env/Scripts/Activate.ps1"
+   2 git
+   3 git status
+   4 git init
+   5 git init
+   6 git add .
+   7 git status
+   8 git status
+   9 git remote add origin https://github.com/deepak4babu/django_in_docker.git
+  10 git push -u origin master
+  11 git commit -m "project upload"
+  12 git push -u origin master

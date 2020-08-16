@@ -1,0 +1,124 @@
+https://code.visualstudio.com/docs/python/tutorial-django
+https://code.visualstudio.com/docs/python/tutorial-django#_explore-the-debugger
+https://github.com/Microsoft/python-sample-vscode-django-tutorial
+https://docs.djangoproject.com/en/3.0/intro/tutorial01/
+https://docs.djangoproject.com/en/3.0/intro/install/
+
+To create a virtual environment:
+  python3 -m venv <environment_name>
+To activate the venv:
+  .\<environment_name>\Script\activate
+To install django:
+  python -m pip install django
+Create a django project:
+  django-admin startproject web_project .
+  This startproject command assumes (by use of . at the end) that the current folder is your project folder, and creates the following within it:
+    manage.py: The Django command-line administrative utility for the project. You run administrative commands for the project using python manage.py <command> [options].
+    A subfolder named web_project, which contains the following files:
+      - __init__.py: an empty file that tells Python that this folder is a Python package.
+      - wsgi.py: an entry point for WSGI-compatible web servers to serve your project. You typically leave this file as-is as it provides the hooks for production web servers.
+      - settings.py: contains settings for Django project, which you modify in the course of developing a web app.
+      - urls.py: contains a table of contents for the Django project, which you also modify in the course of development.
+Start Djangos development server:
+  python manage.py runserver
+to use a different port than the default 8000:
+  python manage.py runserver 5000
+#When you run the server the first time, it creates a default SQLite database in the file db.sqlite3, which is intended for development purposes but can be used in production for low-volume web apps. Also, Django's built-in web server is intended only for local development purposes. When you deploy to a web host, however, Django uses the host's web server instead. The wsgi.py module in the Django project takes care of hooking into the production servers.  
+To Create a Django app:
+  python manage.py startapp hello1
+
+Create a debugger launch profile:
+  - "https://code.visualstudio.com/docs/python/tutorial-django#_create-a-debugger-launch-profile"
+
+Modify hello1/views.py:
+  - create a function inside views.py. This function will be called in urls.py and the webpage is brought up accordingly
+Create a file, hello/urls.py:
+  - Call the function in urls.py under urlpatterns. urlpatterns take 'path' as parameter. path(route, view, kwargs=None, name=None)
+  - if route is "". It is empty path or homepage
+  - if route is <someword>. It is "http://127.0.0.1:8000/<someword>"
+To see class definition:
+  - right click the library/method and select "Go to Definition"   
+ 
+Use a template to render a page:
+  - Templates are HTML files with place holders for values which can be dynamically rendered
+  - Template heritance can be used to create a base page, with common colours/properties and inherit to other page
+To render a template:
+  - Add the app name under "INSTALLED_APPS" in settings.py 
+  - create html file and folders in hello1 app as hello1/template/hello1/hello_there.html
+  - this HTML file has place-holders for some values. These values are filled by a function from views.py
+  - Add "from django.shortcuts import render" in views.py. "render" function will enable to use the hello_there.html template 
+  - render(request, template_name, context=None, content_type=None, status=None, using=None)
+  - In views.py, create a hello_there function and return "render" with request,template_name and context
+  - return renderr in render(request, template_name, context=None, content_type=None, status=None, using=None)
+  
+Serve static files:
+  - https://docs.djangoproject.com/en/2.1/howto/static-files/
+  - To add a static file, the "INSTALLED_APPS" list in "settings.py" should contain "django.contrib.staticfiles" which is added by default
+  - Ready the app for static files:
+    - In the project's web_project/urls.py, add the following import statement - "from django.contrib.staticfiles.urls import staticfiles_urlpatterns"
+    - add "urlpatterns += staticfiles_urlpatterns()" in the file
+  - Refer to static files in a template:
+    - create files and folder as hello1/static/hello1/site.css
+    - The reason for this extra subfolder is that when you deploy the Django project to a production server, you collect all the static files into a single folder that's then served by a dedicated static file server. The static/hello subfolder ensures that when the app's static files are collected, they're in an app-specific subfolder and won't collide with file from other apps in the same project.
+    - In templates/hello1/hello_there.html modify the content to read "site.css" file.
+    - https://code.visualstudio.com/docs/python/tutorial-django#_refer-to-static-files-in-a-template
+
+collect all the static files using collectstatic command:
+  - All Static files in the project are usually collected and run by static server for speed and efficiency
+  - In web_project/settings.py, add the following line "STATIC_ROOT = os.path.join(BASE_DIR, 'static_collected')"
+  - Run "python manage.py collectstatic" in console
+  - A new "static_collected" folder is created and it will have all static files (site.css)
+  - In practice, run collectstatic any time you change static files and before deploying into production.
+
+Create multiple templates that extend a base template:
+  - Create a base page template and styles:
+    - Create file and folder as "templates/hello1/layout.html" and "static/hello1/site.css"
+    - The css file is referenced in the layout.html
+    - Create 3 files under templates/hello1/ as home.html, contact.html, about.html. 
+    - To create these new files VS code snippet will be useful "https://code.visualstudio.com/docs/python/tutorial-django#_create-a-code-snippet"
+    - Extend layout.html in new files and provide the content for the %block <content>%
+    - Create functions in views.py that references the html files created using "render"
+    - Add new paths in urls.py based on the functions in views.py
+    - Run the app to view the changes
+    - layout.html as % url <fn_name>% which links the other html files to the navbar
+
+Work with data, data models, and migrations:
+  - To work with databases, models has to be defined to add and retrieve data from database.
+  - Model is python class derived from "django.db.models.Model"
+  - The general workflow is as follows:
+    - Make changes to the models in your models.py file.
+    - Run "python manage.py makemigrations" to generate scripts in the migrations folder that migrate the database from its current state to the new state.
+    - Run "python manage.py migrate" to apply the scripts to the actual database.
+  - All incremental changes in models are handled by migration scripts.
+  - Define Models:
+    - A Django model is again a Python class derived from django.db.model.Models, which you place in the app's models.py file.
+    - Modify models.py in hello1 folder.
+    - Migrate the database using the command "python manage.py makemigrations" and "python manage.py migrate".
+  - Create forms and save entered data in DB:
+    - Modify the models.py and create a class for log message
+    - Create a form "forms.py" under hello1 folder. This form uses the field derived from models.py
+    - Create a html file "log_message.html", by inheriting the layout.html. Under the "{% block content %}", provide the form tag to use forms.py
+    - Add css content to improve visibility of forms in html
+    - In the views.py create a function that calls "log_message.html" 
+    - In the urls.py, add new path for "log" page
+    - In the layout.html, Add a navbar for "Log Message"
+    - Run the app and add messages to the logs. The text entered in the form will get saved in saved in DB
+    - Modify home.html to show log message:
+      - In the file, create a table to save Date, time and Message. 
+      - Modify css accordingly
+      - Modify home function in "views.py" 
+      - Modify "urls.py" based on home function in "views.py" 
+
+Optional activities:
+  - Create a requirements.txt file for the environment "pip freeze > requirements.txt"
+
+Create a superuser and enable the administrative interface:
+#By default, Django provides an administrative interface for a web app that's protected by authentication. The interface is implemented through the build-in "django.contrib.admin" app, which is included by default in the project's "INSTALLED_APPS" list (settings.py), and authentication is handled with the built-in "django.contrib.auth" app, which is also in "INSTALLED_APPS" by default.
+  - Create a superuser with command "python manage.py createsuperuser --username=<username> --email=<email>"
+  - Add the following in project urls.py " path("admin/", admin.site.urls),"
+  - Run the server "http://127.0.0.1:8000/admin". Login with admin creds
+  - This interface can be customised. "https://docs.djangoproject.com/en/2.1/ref/contrib/admin/"
+Create a container for a Django app:
+  - "https://code.visualstudio.com/docs/python/tutorial-django#_create-a-container-for-a-django-app-using-the-docker-extension"
+  - "https://code.visualstudio.com/docs/containers/quickstart-python"
+    
